@@ -1,4 +1,4 @@
-import { Schema, model, models, Document } from 'mongoose';
+import {Schema, model, models, Document} from 'mongoose';
 
 // TypeScript interface for Event document
 export interface IEvent extends Document {
@@ -144,11 +144,26 @@ function generateSlug(title: string): string {
 
 // Helper function to normalize date to ISO format
 function normalizeDate(dateString: string): string {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString.trim());
+    if (match) {
+        const [, y, m, d] = match;
+        const utc = new Date(Date.UTC(Number(y), Number(m) - 1, Number(d)));
+        if (
+            utc.getUTCFullYear() !== Number(y) ||
+            utc.getUTCMonth() !== Number(m) - 1 ||
+            utc.getUTCDate() !== Number(d)
+        ) {
+            throw new TypeError('Invalid date format');
+        }
+        return `${y}-${m}-${d}`;
+    }
     const date = new Date(dateString);
     if (Number.isNaN(date.getTime())) {
         throw new TypeError('Invalid date format');
     }
-    return date.toISOString().split('T')[0]; // Return YYYY-MM-DD format
+    return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(
+        date.getUTCDate()
+    ).padStart(2, '0')}`; // Return YYYY-MM-DD format
 }
 
 // Helper function to normalize time format
@@ -179,10 +194,10 @@ function normalizeTime(timeString: string): string {
 }
 
 // Create unique index on slug for better performance
-EventSchema.index({ slug: 1 }, { unique: true });
+EventSchema.index({slug: 1}, {unique: true});
 
 // Create compound index for common queries
-EventSchema.index({ date: 1, mode: 1 });
+EventSchema.index({date: 1, mode: 1});
 
 const Event = models.Event || model<IEvent>('Event', EventSchema);
 
