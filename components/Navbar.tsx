@@ -6,14 +6,20 @@ const Navbar = () => {
         <header>
             <nav>
                 <Link href='/' className='logo'>
-                    <Image src='/icons/logo.png' alt='logo' width={24} height={24} />
+                    <Image src='/icons/logo.png' alt='logo' width={24} height={24}/>
                     <p>DevEvent</p>
                 </Link>
 
                 <ul>
-                    <Link href='/'>Home</Link>
-                    <Link href='/'>Event</Link>
-                    <Link href='/'>Create Event</Link>
+                    <li className='list-none'>
+                        <Link href='/'>Home</Link>
+                    </li>
+                    <li className='list-none'>
+                        <Link href='/'>Event</Link>
+                    </li>
+                    <li className='list-none'>
+                        <Link href='/'>Create Event</Link>
+                    </li>
                 </ul>
             </nav>
         </header>

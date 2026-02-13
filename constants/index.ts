@@ -1,4 +1,6 @@
-export const events = [
+import {EventCardProps} from "@/types";
+
+export const events: EventCardProps[] = [
     {
         slug: "react-conf-2024",
         image: "/images/event1.png",

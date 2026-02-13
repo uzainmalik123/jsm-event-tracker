@@ -6,12 +6,10 @@ import {ArrowDown} from "lucide-react";
 
 const ExploreBtn = () => {
     return (
-        <button type="button" id="explore-btn" className="mt-7 mx-auto">
-            <Link href="#events">
-                Explore Events
-                <ArrowDown width={24} height={24} />
-            </Link>
-        </button>
+        <Link id="explore-btn" href="#events" className="mt-7 mx-auto inline-flex items-center gap-2">
+            Explore Events
+            <ArrowDown width={24} height={24}/>
+        </Link>
     )
 }
 export default ExploreBtn
