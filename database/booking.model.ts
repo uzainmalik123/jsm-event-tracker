@@ -36,31 +36,22 @@ const BookingSchema = new Schema<IBooking>(
     }
 );
 
-// Pre-save hook to validate events exists before creating booking
-BookingSchema.pre('save', async function (next) {
+// Pre-save hook to validate event exists before creating booking
+BookingSchema.pre('save', async function () {
     const booking = this as IBooking;
 
     // Only validate eventId if it's new or modified
     if (booking.isModified('eventId') || booking.isNew) {
         if (!Types.ObjectId.isValid(booking.eventId)) {
-            const validationError = new Error('Invalid event ID format');
-            validationError.name = 'ValidationError';
-            return next(validationError);
+            throw new Error('Invalid event ID format');
         }
-        try {
-            const eventExists = await Event.exists({ _id: booking.eventId });
 
-            if (!eventExists) {
-                const error = new Error(`Event with ID ${booking.eventId} does not exist`);
-                error.name = 'ValidationError';
-                return next(error);
-            }
-        } catch (err) {
-            return next(err as Error);
+        const eventExists = await Event.exists({ _id: booking.eventId });
+
+        if (!eventExists) {
+            throw new Error(`Event with ID ${booking.eventId} does not exist`);
         }
     }
-
-    next();
 });
 
 // Create index on eventId for faster queries
@@ -72,8 +63,9 @@ BookingSchema.index({ eventId: 1, createdAt: -1 });
 // Create index on email for user booking lookups
 BookingSchema.index({ email: 1 });
 
-// Enforce one booking per events per email
+// Enforce one booking per event per email
 BookingSchema.index({ eventId: 1, email: 1 }, { unique: true, name: 'uniq_event_email' });
+
 const Booking = models.Booking || model<IBooking>('Booking', BookingSchema);
 
 export default Booking;
