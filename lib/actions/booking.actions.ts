@@ -10,7 +10,7 @@ export async function createBooking({eventId, slug, email}: { eventId: string; s
 
         return {success: true};
     } catch (e) {
-        console.error('Create Booking failed', e instanceof Error ? e.message : 'Unknow Error');
+        console.error('Create Booking failed', e instanceof Error ? e.message : 'Unknown Error');
         return {success: false};
     }
 }

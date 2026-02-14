@@ -9,6 +9,8 @@ const BookEvent = ({eventId, slug}: { eventId: string, slug: string }) => {
     const [submitted, setSubmitted] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
         const {success} = await createBooking({eventId, slug, email})
 
         if (success) {
@@ -16,7 +18,7 @@ const BookEvent = ({eventId, slug}: { eventId: string, slug: string }) => {
 
             // Capture event booking
             posthog.capture('event_booked', {
-                eventId, slug, email
+                eventId, slug
             })
             ;
         } else {

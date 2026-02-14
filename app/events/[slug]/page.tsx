@@ -35,11 +35,11 @@ const EventTags = ({ eventTags }: { eventTags: string[] }) => (
 )
 
 const EventDetails = async ({params}: { params: Promise<{ slug: string }> }) => {
-    'use cache'
+    const {slug} = await params;
 
+    'use cache'
     cacheLife('hours')
 
-    const {slug} = await params;
 
     await connectDB()
     const event = await Event.findOne({slug}).lean()
@@ -95,7 +95,7 @@ const EventDetails = async ({params}: { params: Promise<{ slug: string }> }) => 
                             <p className='text-sm'>Be the first to book your spot!</p>
                         )}
                         <BookEvent
-                            eventId={event._id}
+                            eventId={event._id.toString()}
                             slug={event.slug}
                         />
                     </div>
