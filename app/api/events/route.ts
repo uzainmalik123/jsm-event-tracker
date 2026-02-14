@@ -9,9 +9,14 @@ export async function POST(req: NextRequest) {
 
         const formData = await req.formData()
         let event;
+        let agenda
+        let tags
 
         try {
             event = Object.fromEntries(formData.entries())
+
+            agenda = JSON.parse(formData.get('agenda') as string);
+            tags = JSON.parse(formData.get('tags') as string);
         } catch (e) {
             return NextResponse.json({
                 message: 'Invalid form data',
@@ -22,9 +27,6 @@ export async function POST(req: NextRequest) {
         const file = formData.get('image') as File;
 
         if (!file) return NextResponse.json({message: 'Image file is required'}, {status: 400});
-
-        let agenda = JSON.parse(formData.get('agenda') as string);
-        let tags = JSON.parse(formData.get('tags') as string);
 
         const arrayBuffer = await file.arrayBuffer();
         const fileBuffer: Buffer = Buffer.from(arrayBuffer)
@@ -62,7 +64,7 @@ export async function GET() {
     } catch (e) {
         return NextResponse.json({
             message: 'Event fetching failed',
-            error: e
+            error: e instanceof Error ? e.message : 'Unknown Error'
         }, {status: 500})
     }
 }

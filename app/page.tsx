@@ -10,8 +10,19 @@ export default async function Home() {
 
     cacheLife('hours')
 
+    if (!BASE_URL) {
+        console.error('NEXT_PUBLIC_BASE_URL is not configured');
+        return <section className='flex flex-col items-center'><p>Configuration error</p></section>;
+    }
+
     const response = await fetch(`${BASE_URL}/api/events`);
-    const { events } = await response.json();
+
+    if (!response.ok) {
+        console.error('Failed to fetch events:', response.status);
+        return <section className='flex flex-col items-center'><p>Failed to load events</p></section>;
+    }
+
+    const {events} = await response.json();
 
     return (
         <section className='flex flex-col items-center'>

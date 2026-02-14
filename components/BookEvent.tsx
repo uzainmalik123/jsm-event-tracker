@@ -28,6 +28,9 @@ const BookEvent = () => {
                             onChange={(e) => setEmail(e.target.value)}
                             id='email'
                             placeholder='Enter your email address'
+                            name='email'
+                            autoComplete='email'
+                            required
                         />
                         <button type='submit' className='button-submit'>Submit</button>
                     </div>

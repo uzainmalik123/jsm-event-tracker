@@ -47,9 +47,6 @@ const EventDetails = async ({params}: { params: Promise<{ slug: string }> }) => 
 
     const similarEvents: IEvent[] = await getSimilarEvents(slug)
 
-    console.log(similarEvents)
-
-
     return (
         <section id="event">
             <div className="header">
@@ -101,7 +98,7 @@ const EventDetails = async ({params}: { params: Promise<{ slug: string }> }) => 
                 <h2>Similar Events</h2>
                 <div className="events">
                     {similarEvents.length > 0 && similarEvents.map((event) => (
-                        <EventCard key={event.title} {...event} />
+                        <EventCard key={event.slug} {...event} />
                     ))}
                 </div>
             </div>
