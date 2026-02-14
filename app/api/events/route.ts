@@ -2,6 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 import connectDB from "@/lib/mongodb";
 import {v2 as cloudinary} from 'cloudinary'
 import Event from "@/database/event.model";
+import {getPostHogClient} from "@/lib/posthog-server";
 
 export async function POST(req: NextRequest) {
     try {
@@ -46,9 +47,40 @@ export async function POST(req: NextRequest) {
             tags: tags
         })
 
+        // Capture server-side event creation
+        const posthog = getPostHogClient();
+        const distinctId = req.headers.get('x-posthog-distinct-id') || 'anonymous';
+        posthog.capture({
+            distinctId,
+            event: 'event_created',
+            properties: {
+                event_title: createdEvent.title,
+                event_slug: createdEvent.slug,
+                event_mode: createdEvent.mode,
+                event_location: createdEvent.location,
+                tags_count: tags.length,
+                source: 'api'
+            }
+        });
+        await posthog.shutdown();
+
         return NextResponse.json({message: 'Event created successfully', event: createdEvent}, {status: 201})
     } catch (e) {
         console.error(e);
+
+        // Capture server-side event creation failure
+        const posthog = getPostHogClient();
+        const distinctId = req.headers.get('x-posthog-distinct-id') || 'anonymous';
+        posthog.capture({
+            distinctId,
+            event: 'event_creation_failed',
+            properties: {
+                error_message: e instanceof Error ? e.message : 'Unknown Error',
+                source: 'api'
+            }
+        });
+        await posthog.shutdown();
+
         return NextResponse.json({
             message: 'Event creation failed',
             err: e instanceof Error ? e.message : 'Unknown Error'

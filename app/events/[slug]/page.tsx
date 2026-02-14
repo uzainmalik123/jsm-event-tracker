@@ -6,6 +6,7 @@ import Event, {IEvent} from '@/database/event.model'
 import BookEvent from "@/components/BookEvent";
 import {getSimilarEvents} from "@/lib/actions/event.actions";
 import EventCard from "@/components/EventCard";
+import {cacheLife} from "next/cache";
 
 const EventDetailItem = ({Icon, label}: { Icon: LucideIcon, label: string }) => (
     <div className='flex-row-gap-2 items-center'>
@@ -34,6 +35,10 @@ const EventTags = ({ eventTags }: { eventTags: string[] }) => (
 )
 
 const EventDetails = async ({params}: { params: Promise<{ slug: string }> }) => {
+    'use cache'
+
+    cacheLife('hours')
+
     const {slug} = await params;
 
     await connectDB()
@@ -89,7 +94,10 @@ const EventDetails = async ({params}: { params: Promise<{ slug: string }> }) => 
                         ) : (
                             <p className='text-sm'>Be the first to book your spot!</p>
                         )}
-                        <BookEvent />
+                        <BookEvent
+                            eventId={event._id}
+                            slug={event.slug}
+                        />
                     </div>
                 </aside>
             </div>

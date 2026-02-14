@@ -1,0 +1,16 @@
+'use server'
+
+import connectDB from "@/lib/mongodb";
+import Booking from "@/database/booking.model";
+
+export async function createBooking({eventId, slug, email}: { eventId: string; slug: string, email: string }) {
+    try {
+        await connectDB()
+        await Booking.create({eventId, slug, email});
+
+        return {success: true};
+    } catch (e) {
+        console.error('Create Booking failed', e instanceof Error ? e.message : 'Unknow Error');
+        return {success: false};
+    }
+}
